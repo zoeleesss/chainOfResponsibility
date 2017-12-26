@@ -28,17 +28,46 @@ public abstract class PurchasePower {
     }
 
     public void processRequest(PurchaseRequest request) {
-        if (request.getAmount() < this.getAllowable() && this.successor!=null) {
-            successor.processRequest(request);
-        } else if (request.getAmount() > this.getAllowable() && this.secondSuccessor!=null) {
-            secondSuccessor.processRequest(request);
-        } else if (request.getAmount() > this.getAllowable()  ){
-            System.out.println("Even "+ this.getRole() + " can't approve $" + request.getAmount() +", Please request lower expenditure!");
+        if (request.getAmount() <= this.getAllowable() ) {
+
+            if (successor!=null)
+            {
+                if (request.getAmount()<=successor.getAllowable())
+                {
+                    successor.processRequest(request);
+                }
+                else {
+
+                    // left -> right , or self
+                    if (successor.secondSuccessor!=null)
+                    {
+                        if (successor.secondSuccessor.getAllowable()>=request.getAmount())
+                        {
+                            successor.processRequest(request);
+                        }
+                        else  System.out.println(this.getRole() + " will approve $" + request.getAmount());
+
+                    }
+                    else System.out.println(this.getRole() + " will approve $" + request.getAmount());
+                }
+            }
+            else {
+                System.out.println(this.getRole() + " will approve $" + request.getAmount());
+            }
+
+        } else if (request.getAmount() > this.getAllowable() ) {
+
+            if (secondSuccessor!=null) {
+
+                    secondSuccessor.processRequest(request);
+            }
+            else System.out.println("Even "+ this.getRole() + " can't approve $" + request.getAmount() +", Please request lower expenditure!");
+
+
+
         }
-        if (request.getAmount() <= this.getAllowable() )
-        {
-            System.out.println(this.getRole() + " will approve $" + request.getAmount());
-        }
+
+
 
 
     }
